@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JSST — Jeunesse Sportive Saint-Thonanaise</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --green:#1A7A3A; --green-dark:#0F5527; --green-light:#22A04D;
+    --red:#CC1515; --red-light:#FF2222;
+    --white:#F5F5F0; --off-white:#E8E8E2;
+    --black:#0D0D0D; --gray-dark:#141414; --gray-mid:#1E1E1E; --gray-light:#888;
+    --gold:#D4A017;
+    --fd:'Barlow Condensed',sans-serif; --fb:'Barlow',sans-serif;
+  }
+  body { background:var(--black); color:var(--white); font-family:var(--fb); }
+
+  /* NAV */
+  nav {
+    background:var(--black); border-bottom:3px solid var(--green);
+    position:sticky; top:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 1.5rem; height:62px;
+  }
+  .nav-logo {
+    display:flex; align-items:center; gap:10px; cursor:pointer;
+    font-family:var(--fd); font-weight:900; font-size:18px;
+    letter-spacing:2px; color:var(--white); text-transform:uppercase;
+  }
+  .logo-badge {
+    width:44px; height:44px; background:var(--green);
+    clip-path:polygon(50% 0%,95% 25%,95% 75%,50% 100%,5% 75%,5% 25%);
+    display:flex; align-items:center; justify-content:center;
+    font-size:11px; font-weight:900; color:white; text-align:center; line-height:1.1;
+  }
+  .nav-links { display:flex; gap:0; flex-wrap:wrap; }
+  .nav-link {
+    padding:0 0.9rem; height:62px; display:flex; align-items:center;
+    font-family:var(--fd); font-weight:700; font-size:12px;
+    letter-spacing:1.5px; text-transform:uppercase; color:var(--gray-light);
+    cursor:pointer; border-bottom:3px solid transparent; margin-bottom:-3px;
+    transition:color .2s,border-color .2s;
+  }
+  .nav-link:hover,.nav-link.active { color:var(--white); border-bottom-color:var(--green); }
+
+  /* SECTIONS */
+  .section { display:none; animation:fadeIn .3s ease; }
+  .section.active { display:block; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+  /* HERO */
+  .hero {
+    background:linear-gradient(135deg,#030a05 0%,#0d2012 50%,#1a0505 100%);
+    min-height:460px; display:flex; align-items:center; justify-content:center;
+    text-align:center; padding:4rem 2rem; position:relative; overflow:hidden;
+  }
+  .hero::before {
+    content:''; position:absolute; inset:0;
+    background:repeating-linear-gradient(
+      60deg,transparent,transparent 80px,
+      rgba(26,122,58,0.05) 80px,rgba(26,122,58,0.05) 81px
+    );
+  }
+  .hero-tricolor {
+    position:absolute; bottom:0; left:0; right:0; height:5px;
+    background:linear-gradient(to right,var(--green) 33%,white 33%,white 66%,var(--red) 66%);
+  }
+  .hero-content { position:relative; z-index:1; }
+  .hero-label { font-family:var(--fd); font-size:11px; font-weight:700; letter-spacing:5px; color:var(--green); text-transform:uppercase; margin-bottom:1rem; }
+  .hero-title { font-family:var(--fd); font-size:clamp(48px,9vw,88px); font-weight:900; line-height:0.9; text-transform:uppercase; color:var(--white); margin-bottom:0.5rem; }
+  .hero-title .jsst { color:var(--green); }
+  .hero-title .sub { font-size:clamp(14px,2.5vw,22px); color:var(--off-white); display:block; letter-spacing:3px; margin-top:8px; font-weight:700; }
+  .hero-sub { font-size:15px; color:var(--gray-light); max-width:440px; margin:1.2rem auto 2rem; }
+  .hero-btns { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+  .btn-primary {
+    background:var(--green); color:white; border:none;
+    font-family:var(--fd); font-weight:700; font-size:13px;
+    letter-spacing:2px; text-transform:uppercase; padding:13px 28px;
+    cursor:pointer; transition:background .2s,transform .1s;
+    clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+  }
+  .btn-primary:hover { background:var(--green-light); transform:translateY(-1px); }
+  .btn-secondary {
+    background:transparent; color:var(--white); border:1px solid #444;
+    font-family:var(--fd); font-weight:700; font-size:13px;
+    letter-spacing:2px; text-transform:uppercase; padding:13px 28px;
+    cursor:pointer; transition:border-color .2s,color .2s;
+  }
+  .btn-secondary:hover { border-color:var(--green); color:var(--green); }
+
+  /* SECTION HEADER */
+  .section-header { padding:2.5rem 2rem 1.5rem; border-bottom:1px solid #1e1e1e; }
+  .section-tag { font-family:var(--fd); font-size:11px; font-weight:700; letter-spacing:4px; text-transform:uppercase; color:var(--green); margin-bottom:6px; }
+  .section-title { font-family:var(--fd); font-size:40px; font-weight:900; text-transform:uppercase; color:var(--white); line-height:1; }
+  .tricolor-bar { height:3px; width:80px; background:linear-gradient(to right,var(--green) 33%,white 33%,white 66%,var(--red) 66%); margin-top:10px; }
+
+  /* CONVOCATIONS */
+  .convocs-list { padding:1.5rem 2rem; display:flex; flex-direction:column; gap:8px; }
+  .convoc-btn {
+    background:var(--gray-mid); border:1px solid #2a2a2a; border-left:4px solid var(--green);
+    padding:1rem 1.5rem; cursor:pointer; transition:background .2s,border-left-color .2s;
+    display:flex; align-items:center; justify-content:space-between;
+    text-align:left; width:100%;
+  }
+  .convoc-btn:hover { background:#252525; border-left-color:var(--red); }
+  .convoc-btn.open { border-left-color:var(--red); background:#1f1010; }
+  .convoc-btn-left { flex:1; }
+  .convoc-equipe { font-family:var(--fd); font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--green); margin-bottom:4px; }
+  .convoc-btn.open .convoc-equipe { color:var(--red); }
+  .convoc-match-name { font-family:var(--fd); font-size:20px; font-weight:900; text-transform:uppercase; color:var(--white); }
+  .convoc-date { font-size:12px; color:var(--gray-light); margin-top:2px; }
+  .convoc-arrow { font-size:18px; color:var(--gray-light); transition:transform .3s; margin-left:1rem; }
+  .convoc-btn.open .convoc-arrow { transform:rotate(180deg); color:var(--red); }
+  .convoc-detail {
+    display:none; background:#111; border:1px solid #1f1f1f; border-top:none;
+    padding:1.5rem; margin-top:-8px; margin-bottom:8px;
+  }
+  .convoc-detail.open { display:block; animation:fadeIn .25s ease; }
+  .convoc-meta-row { display:flex; gap:2rem; flex-wrap:wrap; margin-bottom:1rem; }
+  .convoc-meta-item { font-size:13px; color:var(--gray-light); }
+  .convoc-meta-item strong { color:var(--white); display:block; font-size:15px; font-family:var(--fd); font-weight:700; text-transform:uppercase; }
+  .players-grid { display:flex; flex-wrap:wrap; gap:6px; margin-top:1rem; padding-top:1rem; border-top:1px solid #222; }
+  .player-tag {
+    background:#1a1a1a; border:1px solid #333;
+    font-size:11px; padding:5px 12px; font-family:var(--fd); font-weight:700;
+    letter-spacing:1px; text-transform:uppercase; color:var(--white);
+  }
+  .player-tag.capitaine { border-color:var(--gold); color:var(--gold); }
+
+  /* BOUTIQUE */
+  .shop-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:1px; background:#1a1a1a; margin:1px; }
+  .shop-card { background:var(--gray-mid); overflow:hidden; cursor:pointer; transition:background .2s; }
+  .shop-card:hover { background:#252525; }
+  .shop-img { height:160px; background:#111; display:flex; align-items:center; justify-content:center; font-size:52px; border-bottom:1px solid #1a1a1a; position:relative; }
+  .shop-badge { position:absolute; top:10px; right:10px; background:var(--red); color:white; font-size:10px; font-weight:700; font-family:var(--fd); letter-spacing:2px; padding:3px 8px; text-transform:uppercase; }
+  .shop-info { padding:1rem; }
+  .shop-name { font-family:var(--fd); font-size:17px; font-weight:900; text-transform:uppercase; color:var(--white); margin-bottom:3px; }
+  .shop-desc { font-size:12px; color:var(--gray-light); margin-bottom:10px; }
+  .shop-footer { display:flex; align-items:center; justify-content:space-between; }
+  .shop-price { font-family:var(--fd); font-size:20px; font-weight:900; color:var(--gold); }
+  .btn-add { background:var(--green); color:white; border:none; font-family:var(--fd); font-weight:700; font-size:11px; letter-spacing:1px; text-transform:uppercase; padding:7px 12px; cursor:pointer; transition:background .2s; }
+  .btn-add:hover { background:var(--green-light); }
+
+  /* HISTOIRE */
+  .histoire-content { max-width:780px; margin:0 auto; padding:2rem; }
+  .timeline { position:relative; padding-left:2rem; }
+  .timeline::before { content:''; position:absolute; left:0; top:0; bottom:0; width:2px; background:linear-gradient(to bottom,var(--green),var(--red),transparent); }
+  .timeline-item { position:relative; margin-bottom:2.5rem; }
+  .timeline-item::before { content:''; position:absolute; left:-2.4rem; top:6px; width:10px; height:10px; background:var(--green); border-radius:50%; }
+  .timeline-year { font-family:var(--fd); font-size:11px; font-weight:700; letter-spacing:3px; color:var(--green); text-transform:uppercase; margin-bottom:5px; }
+  .timeline-title { font-family:var(--fd); font-size:22px; font-weight:900; text-transform:uppercase; color:var(--white); margin-bottom:7px; }
+  .timeline-text { font-size:14px; color:var(--gray-light); line-height:1.7; }
+
+  /* CLUB */
+  .club-content { padding:2rem; }
+  .staff-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:1px; background:#1a1a1a; margin-bottom:1px; }
+  .staff-card { background:var(--gray-mid); padding:1.5rem; text-align:center; }
+  .staff-avatar { width:56px; height:56px; border-radius:50%; background:var(--green); display:flex; align-items:center; justify-content:center; font-family:var(--fd); font-size:20px; font-weight:900; color:white; margin:0 auto 10px; }
+  .staff-name { font-family:var(--fd); font-size:15px; font-weight:900; text-transform:uppercase; color:var(--white); margin-bottom:3px; }
+  .staff-role { font-size:12px; color:var(--gray-light); }
+  .teams-list { display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:1px; background:#1a1a1a; }
+  .team-item { background:var(--gray-mid); padding:1.1rem 1.5rem; display:flex; align-items:center; gap:12px; }
+  .team-dot { width:8px; height:8px; background:var(--green); border-radius:50%; flex-shrink:0; }
+  .team-info-name { font-family:var(--fd); font-size:16px; font-weight:900; text-transform:uppercase; color:var(--white); }
+  .team-info-detail { font-size:12px; color:var(--gray-light); }
+
+  /* SPONSORS */
+  .sponsors-content { padding:2rem; }
+  .sponsor-tier { margin-bottom:3rem; }
+  .tier-label {
+    font-family:var(--fd); font-size:11px; font-weight:700; letter-spacing:4px;
+    text-transform:uppercase; margin-bottom:1rem; padding:6px 14px; display:inline-block;
+  }
+  .tier-or { background:var(--gold); color:#000; }
+  .tier-argent { background:#888; color:#000; }
+  .tier-bronze { background:#7A4500; color:var(--white); }
+  .tier-partenaire { background:var(--green); color:var(--white); }
+  .sponsors-row { display:flex; flex-wrap:wrap; gap:1px; background:#1a1a1a; }
+  .sponsor-card {
+    background:var(--gray-mid); display:flex; align-items:center; justify-content:center;
+    flex-direction:column; gap:8px; cursor:pointer; transition:background .2s;
+    text-align:center; padding:1.5rem 1rem;
+  }
+  .sponsor-card:hover { background:#252525; }
+  .sponsor-card.gold { flex:1 1 220px; min-height:130px; }
+  .sponsor-card.silver { flex:1 1 170px; min-height:110px; }
+  .sponsor-card.bronze { flex:1 1 140px; min-height:90px; }
+  .sponsor-card.partner { flex:1 1 120px; min-height:80px; }
+  .sponsor-logo {
+    font-family:var(--fd); font-weight:900; text-transform:uppercase;
+    border:2px solid #333; display:flex; align-items:center; justify-content:center;
+  }
+  .sponsor-logo.lg { font-size:22px; color:var(--white); padding:12px 20px; width:140px; height:60px; }
+  .sponsor-logo.md { font-size:17px; color:var(--white); padding:10px 16px; width:120px; height:50px; }
+  .sponsor-logo.sm { font-size:14px; color:var(--white); padding:8px 12px; width:100px; height:42px; }
+  .sponsor-logo.xs { font-size:12px; color:var(--white); padding:6px 10px; width:90px; height:36px; }
+  .sponsor-desc { font-size:11px; color:var(--gray-light); letter-spacing:1px; text-transform:uppercase; }
+  .sponsor-cta {
+    margin-top:2.5rem; background:var(--gray-mid); border:1px solid #2a2a2a; border-left:4px solid var(--green);
+    padding:1.5rem 2rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;
+  }
+  .sponsor-cta-text { font-family:var(--fd); font-size:20px; font-weight:900; text-transform:uppercase; color:var(--white); }
+  .sponsor-cta-sub { font-size:13px; color:var(--gray-light); margin-top:4px; }
+
+  /* LICENCE */
+  .licence-content { max-width:640px; margin:0 auto; padding:2rem; }
+  .status-info { background:rgba(26,122,58,.12); border:1px solid rgba(26,122,58,.3); padding:1rem 1.25rem; margin-bottom:1.5rem; font-size:14px; color:var(--gray-light); }
+  .status-info strong { color:var(--green); }
+  .form-block { background:var(--gray-mid); border:1px solid #2a2a2a; padding:2rem; margin-bottom:1.5rem; }
+  .form-block-title { font-family:var(--fd); font-size:12px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--green); margin-bottom:1.5rem; padding-bottom:10px; border-bottom:1px solid #2a2a2a; }
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+  .form-group { margin-bottom:1rem; }
+  .form-group label { display:block; font-size:11px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--gray-light); margin-bottom:5px; }
+  .form-group input,.form-group select,.form-group textarea { width:100%; background:#111; border:1px solid #333; color:var(--white); padding:10px 14px; font-family:var(--fb); font-size:14px; transition:border-color .2s; outline:none; }
+  .form-group input:focus,.form-group select:focus,.form-group textarea:focus { border-color:var(--green); }
+  .form-group textarea { resize:vertical; min-height:80px; }
+  .form-group select option { background:#111; }
+  .form-submit { width:100%; background:var(--green); color:white; border:none; font-family:var(--fd); font-weight:900; font-size:16px; letter-spacing:3px; text-transform:uppercase; padding:16px; cursor:pointer; transition:background .2s; }
+  .form-submit:hover { background:var(--green-light); }
+  .success-msg { display:none; background:rgba(26,122,58,.2); border:1px solid rgba(26,122,58,.5); padding:1.5rem; text-align:center; color:#4de67e; font-family:var(--fd); font-size:18px; font-weight:900; text-transform:uppercase; letter-spacing:2px; margin-top:1rem; }
+
+  /* FOOTER */
+  footer { background:#080808; border-top:3px solid var(--green); padding:3rem 2rem 1.5rem; }
+  .footer-tricolor { height:3px; background:linear-gradient(to right,var(--green) 33%,white 33%,white 66%,var(--red) 66%); margin-bottom:2.5rem; }
+  .footer-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:2rem; margin-bottom:2rem; }
+  .footer-col-title { font-family:var(--fd); font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--green); margin-bottom:1rem; padding-bottom:8px; border-bottom:1px solid #1a1a1a; }
+  .footer-link { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--gray-light); margin-bottom:8px; cursor:pointer; transition:color .2s; }
+  .footer-link:hover { color:var(--white); }
+  .social-row { display:flex; gap:10px; margin-top:8px; }
+  .social-btn { width:36px; height:36px; background:#111; border:1px solid #2a2a2a; display:flex; align-items:center; justify-content:center; font-size:13px; cursor:pointer; transition:background .2s,border-color .2s; color:var(--white); text-decoration:none; font-family:var(--fd); font-weight:700; }
+  .social-btn:hover { background:var(--green); border-color:var(--green); }
+  .footer-bottom { border-top:1px solid #1a1a1a; padding-top:1.5rem; display:flex; align-items:center; justify-content:space-between; font-size:12px; color:#333; flex-wrap:wrap; gap:8px; }
+  .footer-bottom span { color:var(--green); font-family:var(--fd); font-weight:700; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo" onclick="showSection('accueil')">
+    <div class="logo-badge">JSST</div>
+    <span>JSST</span>
+  </div>
+  <div class="nav-links">
+    <div class="nav-link active" onclick="showSection('accueil',this)">Accueil</div>
+    <div class="nav-link" onclick="showSection('convocations',this)">Convocations</div>
+    <div class="nav-link" onclick="showSection('boutique',this)">Boutique</div>
+    <div class="nav-link" onclick="showSection('histoire',this)">Histoire</div>
+    <div class="nav-link" onclick="showSection('club',this)">Le Club</div>
+    <div class="nav-link" onclick="showSection('sponsors',this)">Sponsors</div>
+    <div class="nav-link" onclick="showSection('licence',this)">Licence</div>
+  </div>
+</nav>
+
+<!-- ========== ACCUEIL ========== -->
+<div id="section-accueil" class="section active">
+  <div class="hero">
+    <div class="hero-tricolor"></div>
+    <div class="hero-content">
+      <div class="hero-label">Club de Football — Saint-Thonan</div>
+      <div class="hero-title">
+        <span class="jsst">JSST</span>
+        <span class="sub">Jeunesse Sportive<br>Saint-Thonanaise</span>
+      </div>
+      <div class="hero-sub">Passion, engagement et fierté. Portez les couleurs vert, rouge et blanc.</div>
+      <div class="hero-btns">
+        <button class="btn-primary" onclick="showSection('licence',document.querySelectorAll('.nav-link')[6])">Prendre une licence</button>
+        <button class="btn-secondary" onclick="showSection('convocations',document.querySelectorAll('.nav-link')[1])">Voir les convocations</button>
+      </div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#1a1a1a;margin:1px;">
+    <div style="background:var(--gray-mid);padding:2rem;text-align:center;">
+      <div style="font-family:var(--fd);font-size:48px;font-weight:900;color:var(--green);">1978</div>
+      <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gray-light);">Fondation</div>
+    </div>
+    <div style="background:var(--gray-mid);padding:2rem;text-align:center;">
+      <div style="font-family:var(--fd);font-size:48px;font-weight:900;color:var(--green);">5</div>
+      <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gray-light);">Équipes</div>
+    </div>
+    <div style="background:var(--gray-mid);padding:2rem;text-align:center;">
+      <div style="font-family:var(--fd);font-size:48px;font-weight:900;color:var(--green);">150+</div>
+      <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gray-light);">Licenciés</div>
+    </div>
+  </div>
+  <div style="padding:2rem;">
+    <div style="background:var(--gray-mid);border-left:4px solid var(--green);padding:1.5rem 2rem;">
+      <div style="font-family:var(--fd);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--green);margin-bottom:6px;">Prochain match</div>
+      <div style="font-family:var(--fd);font-size:26px;font-weight:900;text-transform:uppercase;color:var(--white);margin-bottom:4px;">JSST vs AS Landerneau</div>
+      <div style="font-size:13px;color:var(--gray-light);">Samedi 21 mars 2026 • 15h00 • Stade de Saint-Thonan</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== CONVOCATIONS ========== -->
+<div id="section-convocations" class="section">
+  <div class="section-header">
+    <div class="section-tag">Journée du 21 mars 2026</div>
+    <div class="section-title">Convocations</div>
+    <div class="tricolor-bar"></div>
+  </div>
+  <div class="convocs-list">
+
+    <button class="convoc-btn" onclick="toggleConvoc('sA',this)">
+      <div class="convoc-btn-left">
+        <div class="convoc-equipe">Seniors A — Division 3</div>
+        <div class="convoc-match-name">JSST vs AS Landerneau</div>
+        <div class="convoc-date">Sam. 21 mars • 15h00 • Stade de Saint-Thonan</div>
+      </div>
+      <div class="convoc-arrow">▼</div>
+    </button>
+    <div id="convoc-sA" class="convoc-detail">
+      <div class="convoc-meta-row">
+        <div class="convoc-meta-item"><strong>Date & heure</strong>Sam. 21 mars — 15h00</div>
+        <div class="convoc-meta-item"><strong>Lieu</strong>Stade Municipal, Saint-Thonan</div>
+        <div class="convoc-meta-item"><strong>RDV vestiaire</strong>13h30</div>
+        <div class="convoc-meta-item"><strong>Tenue</strong>Domicile (Vert)</div>
+      </div>
+      <div class="players-grid">
+        <div class="player-tag capitaine">Le Goff (C) (G)</div>
+        <div class="player-tag">Calvez</div><div class="player-tag">Omnès</div>
+        <div class="player-tag">Kerjean</div><div class="player-tag">Prigent</div>
+        <div class="player-tag">Ar Gall</div><div class="player-tag">Bihan</div>
+        <div class="player-tag">Kermarrec</div><div class="player-tag">Rolland</div>
+        <div class="player-tag">Morvan</div><div class="player-tag">Quéméner</div>
+        <div class="player-tag">Labbé (rem.)</div><div class="player-tag">Tanguy (rem.)</div>
+      </div>
+    </div>
+
+    <button class="convoc-btn" onclick="toggleConvoc('sB',this)">
+      <div class="convoc-btn-left">
+        <div class="convoc-equipe">Seniors B — Division 5</div>
+        <div class="convoc-match-name">FC Guipavas vs JSST</div>
+        <div class="convoc-date">Dim. 22 mars • 10h30 • Terrain de Guipavas</div>
+      </div>
+      <div class="convoc-arrow">▼</div>
+    </button>
+    <div id="convoc-sB" class="convoc-detail">
+      <div class="convoc-meta-row">
+        <div class="convoc-meta-item"><strong>Date & heure</strong>???</div>
+        <div class="convoc-meta-item"><strong>Lieu</strong>????</div>
+        <div class="convoc-meta-item"><strong>RDV parking</strong>?????</div>
+      </div>
+      <div class="players-grid">
+        <div class="player-tag capitaine">Mevel (C)</div>
+        <div class="player-tag"> Thomas</div><div class="player-tag">Berthevas.T</div>
+        <div class="player-tag">Antoine</div><div class="player-tag">Berthevas.A</div>
+        <div class="player-tag">Mathias</div><div class="player-tag"></div>
+        <div class="player-tag">bryan</div><div class="player-tag">donnart</div>
+        <div class="player-tag">marius</div><div class="player-tag">lagadec</div>
+        <div class="player-tag">Romain</div>
+      </div>
+    </div>  
+
+  </div>
+</div>
+
+<!-- ========== BOUTIQUE ========== -->
+<div id="section-boutique" class="section">
+  <div class="section-header">
+    <div class="section-tag">Équipements officiels JSST</div>
+    <div class="section-title">Boutique</div>
+    <div class="tricolor-bar"></div>
+  </div>
+  <div class="shop-grid">
+    <div class="shop-card">
+      <div class="shop-img">👕<div class="shop-badge">Nouveau</div></div>
+      <div class="shop-info"><div class="shop-name">Maillot Domicile</div><div class="shop-desc">Vert officiel JSST — toutes tailles</div><div class="shop-footer"><div class="shop-price">45 €</div><button class="btn-add">Ajouter</button></div></div>
+    </div>
+    <div class="shop-card">
+      <div class="shop-img">🎽</div>
+      <div class="shop-info"><div class="shop-name">Maillot Extérieur</div><div class="shop-desc">Blanc avec logo brodé JSST</div><div class="shop-footer"><div class="shop-price">40 €</div><button class="btn-add">Ajouter</button></div></div>
+    </div>
+    <div class="shop-card">
+      <div class="shop-img">🧥</div>
+      <div class="shop-info"><div class="shop-name">K-Way Club</div><div class="shop-desc">Coupe-vent imperméable brodé JSST</div><div class="shop-footer"><div class="shop-price">62 €</div><button class="btn-add">Ajouter</button></div></div>
+    </div>
+    <div class="shop-card">
+      <div class="shop-img">🩱<div class="shop-badge">Pack</div></div>
+      <div class="shop-info"><div class="shop-name">Tenue Entraînement</div><div class="shop-desc">Maillot + short + chaussettes JSST</div><div class="shop-footer"><div class="shop-price">55 €</div><button class="btn-add">Ajouter</button></div></div>
+    </div>
+    <div class="shop-card">
+      <div class="shop-img">👟</div>
+      <div class="shop-info"><div class="shop-name">Survêtement Pro</div><div class="shop-desc">Veste + pantalon d'échauffement</div><div class="shop-footer"><div class="shop-price">78 €</div><button class="btn-add">Ajouter</button></div></div>
+    </div>
+    <div class="shop-card">
+      <div class="shop-img">🧢</div>
+      <div class="shop-info"><div class="shop-name">Pack Supporter</div><div class="shop-desc">Casquette + écharpe + sac JSST</div><div class="shop-footer"><div class="shop-price">32 €</div><button class="btn-add">Ajouter</button></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== HISTOIRE ========== -->
+<div id="section-histoire" class="section">
+  <div class="section-header">
+    <div class="section-tag">Depuis 1978</div>
+    <div class="section-title">Notre Histoire</div>
+    <div class="tricolor-bar"></div>
+  </div>
+  <div class="histoire-content">
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-year">1978 — Fondation</div>
+        <div class="timeline-title">La Naissance de la JSST</div>
+        <div class="timeline-text">La Jeunesse Sportive Saint-Thonanaise voit le jour grâce à quelques habitants passionnés de football. Une équipe, un terrain, et une ambition commune : faire rayonner Saint-Thonan sur le plan sportif. Les couleurs vert, rouge et blanc sont adoptées dès le premier jour.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">1990 — Premier titre</div>
+        <div class="timeline-title">Champion de District</div>
+        <div class="timeline-text">Après plus d'une décennie de travail acharné, la JSST décroche son premier titre de Champion de District. Une saison mémorable qui marque l'entrée du club dans une nouvelle dimension et renforce son ancrage dans le paysage footballistique breton.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2002 — Formation</div>
+        <div class="timeline-title">Création de la Section Jeunes</div>
+        <div class="timeline-text">Consciente de l'importance de la formation, la JSST lance ses équipes jeunes. Des U8 aux U17, le club se dote d'un véritable projet éducatif et sportif pour les enfants du territoire. Une décision fondatrice qui façonne encore le club aujourd'hui.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2015 — Infrastructure</div>
+        <div class="timeline-title">Rénovation du Stade</div>
+        <div class="timeline-text">Rénovation complète du stade municipal : nouvelles tribunes, vestiaires modernisés, éclairage nocturne. Un outil à la hauteur des ambitions du club, qui peut désormais accueillir dignement toutes ses équipes et ses nombreux supporters.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2026 — Aujourd'hui</div>
+        <div class="timeline-title">La JSST, Plus Forte que Jamais</div>
+        <div class="timeline-text">Avec 150 licenciés, 5 équipes et un projet sportif ambitieux, la JSST s'affirme comme un acteur incontournable du football finistérien. Le cap est mis sur la montée en Division 2 Régionale d'ici 2028.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== LE CLUB ========== -->
+<div id="section-club" class="section">
+  <div class="section-header">
+    <div class="section-tag">Organisation</div>
+    <div class="section-title">Le Club</div>
+    <div class="tricolor-bar"></div>
+  </div>
+  <div class="club-content">
+    <div style="font-family:var(--fd);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--green);margin-bottom:1rem;">Bureau Directeur</div>
+    <div class="staff-grid" style="margin-bottom:2rem;">
+      <div class="staff-card"><div class="staff-avatar">PL</div><div class="staff-name">P. Le Brun</div><div class="staff-role">Président</div></div>
+      <div class="staff-card"><div class="staff-avatar">MK</div><div class="staff-name">M. Kergoat</div><div class="staff-role">Secrétaire</div></div>
+      <div class="staff-card"><div class="staff-avatar">JC</div><div class="staff-name">J. Calvez</div><div class="staff-role">Trésorier</div></div>
+      <div class="staff-card"><div class="staff-avatar">AR</div><div class="staff-name">A. Rolland</div><div class="staff-role">Resp. Sportif</div></div>
+    </div>
+    <div style="font-family:var(--fd);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--green);margin-bottom:1rem;">Nos Équipes</div>
+    <div class="teams-list">
+      <div class="team-item"><div class="team-dot"></div><div><div class="team-info-name">Seniors A</div><div class="team-info-detail">Division 3 Régionale</div></div></div>
+      <div class="team-item"><div class="team-dot"></div><div><div class="team-info-name">Seniors B</div><div class="team-info-detail">Division 5 Départementale</div></div></div>
+      <div class="team-item"><div class="team-dot"></div><div><div class="team-info-name">U17</div><div class="team-info-detail">Championnat Régional</div></div></div>
+      <div class="team-item"><div class="team-dot"></div><div><div class="team-info-name">U14</div><div class="team-info-detail">Championnat Départemental</div></div></div>
+      <div class="team-item"><div class="team-dot"></div><div><div class="team-info-name">U11 / Loisirs</div><div class="team-info-detail">École de Football</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SPONSORS ========== -->
+<div id="section-sponsors" class="section">
+  <div class="section-header">
+    <div class="section-tag">Ils nous soutiennent</div>
+    <div class="section-title">Nos Sponsors</div>
+    <div class="tricolor-bar"></div>
+  </div>
+  <div class="sponsors-content">
+
+    <div class="sponsor-tier">
+      <div class="tier-label tier-or">Sponsors Or</div>
+      <div class="sponsors-row">
+        <div class="sponsor-card gold"><div class="sponsor-logo lg">GARAGE<br>LE GOFF</div><div class="sponsor-desc">Concessionnaire Auto</div></div>
+        <div class="sponsor-card gold"><div class="sponsor-logo lg">BREST<br>MATÉRIAUX</div><div class="sponsor-desc">Négoce & Construction</div></div>
+        <div class="sponsor-card gold"><div class="sponsor-logo lg">CRÉDIT<br>AGRICOLE</div><div class="sponsor-desc">Banque Partenaire</div></div>
+      </div>
+    </div>
+
+    <div class="sponsor-tier">
+      <div class="tier-label tier-argent">Sponsors Argent</div>
+      <div class="sponsors-row">
+        <div class="sponsor-card silver"><div class="sponsor-logo md">BOULANGERIE<br>KERJEAN</div><div class="sponsor-desc">Artisan Boulanger</div></div>
+        <div class="sponsor-card silver"><div class="sponsor-logo md">COIFFURE<br>ARMOR</div><div class="sponsor-desc">Salon de Coiffure</div></div>
+        <div class="sponsor-card silver"><div class="sponsor-logo md">PLOMBERIE<br>MÉNEZ</div><div class="sponsor-desc">Artisan Plombier</div></div>
+        <div class="sponsor-card silver"><div class="sponsor-logo md">AUTO ÉCOLE<br>PENN AR BED</div><div class="sponsor-desc">Formation Conduite</div></div>
+      </div>
+    </div>
+
+    <div class="sponsor-tier">
+      <div class="tier-label tier-bronze">Sponsors Bronze</div>
+      <div class="sponsors-row">
+        <div class="sponsor-card bronze"><div class="sponsor-logo sm">BIHAN<br>ÉLEC</div><div class="sponsor-desc">Électricité</div></div>
+        <div class="sponsor-card bronze"><div class="sponsor-logo sm">PIZZERIA<br>IL GUSTO</div><div class="sponsor-desc">Restauration</div></div>
+        <div class="sponsor-card bronze"><div class="sponsor-logo sm">PEINTURE<br>COAT</div><div class="sponsor-desc">Peintre Décorateur</div></div>
+        <div class="sponsor-card bronze"><div class="sponsor-logo sm">TAXI<br>BRETON</div><div class="sponsor-desc">Transport</div></div>
+        <div class="sponsor-card bronze"><div class="sponsor-logo sm">KEBAB<br>DU STADE</div><div class="sponsor-desc">Restauration rapide</div></div>
+      </div>
+    </div>
+
+    <div class="sponsor-tier">
+      <div class="tier-label tier-partenaire">Partenaires Institutionnels</div>
+      <div class="sponsors-row">
+        <div class="sponsor-card partner"><div class="sponsor-logo xs">MAIRIE<br>ST-THONAN</div></div>
+        <div class="sponsor-card partner"><div class="sponsor-logo xs">CONSEIL<br>DÉPTAL 29</div></div>
+        <div class="sponsor-card partner"><div class="sponsor-logo xs">FFF<br>BRETAGNE</div></div>
+        <div class="sponsor-card partner"><div class="sponsor-logo xs">BREST<br>MÉTROPOLE</div></div>
+      </div>
+    </div>
+
+    <div class="sponsor-cta">
+      <div>
+        <div class="sponsor-cta-text">Devenez sponsor de la JSST</div>
+        <div class="sponsor-cta-sub">Associez votre entreprise aux valeurs du club : proximité, engagement et sport pour tous.</div>
+      </div>
+      <button class="btn-primary" onclick="showSection('licence',document.querySelectorAll('.nav-link')[6])">Nous contacter</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ========== LICENCE ========== -->
+<div id="section-licence" class="section">
+  <div class="section-header">
+    <div class="section-tag">Inscription</div>
+    <div class="section-title">Demande de Licence</div>
+    <div class="tricolor-bar"></div>
+  </div>
+  <div class="licence-content">
+    <div class="status-info"><strong>Important :</strong> Votre demande sera traitée par le bureau de la JSST. Vous recevrez une réponse sous 48–72h à l'adresse email indiquée.</div>
+    <div class="form-block">
+      <div class="form-block-title">Informations personnelles</div>
+      <div class="form-row">
+        <div class="form-group"><label>Nom</label><input type="text" placeholder="Le Bras"></div>
+        <div class="form-group"><label>Prénom</label><input type="text" placeholder="Yann"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Date de naissance</label><input type="date"></div>
+        <div class="form-group"><label>Téléphone</label><input type="tel" placeholder="06 XX XX XX XX"></div>
+      </div>
+      <div class="form-group"><label>Email</label><input type="email" placeholder="yann.lebras@email.com"></div>
+      <div class="form-group"><label>Adresse</label><input type="text" placeholder="12 rue des Genêts, 29290 Saint-Thonan"></div>
+    </div>
+    <div class="form-block">
+      <div class="form-block-title">Demande sportive</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Équipe souhaitée</label>
+          <select>
+            <option value="">— Choisir —</option>
+            <option>Seniors A</option><option>Seniors B</option>
+            <option>U17</option><option>U14</option><option>U11 / Loisirs</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Poste</label>
+          <select>
+            <option value="">— Choisir —</option>
+            <option>Gardien</option><option>Défenseur</option>
+            <option>Milieu</option><option>Attaquant</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label>Club(s) précédent(s)</label><input type="text" placeholder="Ex : AS Landerneau, FC Brest..."></div>
+      <div class="form-group"><label>Message / informations complémentaires</label><textarea placeholder="Présentez-vous, indiquez vos disponibilités..."></textarea></div>
+    </div>
+    <button class="form-submit" onclick="submitLicence()">Soumettre ma demande</button>
+    <div id="success-msg" class="success-msg">Demande envoyée ! La JSST vous recontacte sous 48h.</div>
+  </div>
+</div>
+
+<!-- ========== FOOTER ========== -->
+<footer>
+  <div class="footer-tricolor"></div>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-col-title">JSST</div>
+      <div style="font-size:13px;color:var(--gray-light);line-height:1.8;">Jeunesse Sportive<br>Saint-Thonanaise<br>Stade Municipal — Saint-Thonan<br>29290 — Finistère</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Contact</div>
+      <div class="footer-link">📞 06 XX XX XX XX</div>
+      <div class="footer-link">✉️ contact@jsst.fr</div>
+      <div class="footer-link">📍 Stade de Saint-Thonan</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Navigation</div>
+      <div class="footer-link" onclick="showSection('convocations',document.querySelectorAll('.nav-link')[1])">Convocations</div>
+      <div class="footer-link" onclick="showSection('boutique',document.querySelectorAll('.nav-link')[2])">Boutique</div>
+      <div class="footer-link" onclick="showSection('sponsors',document.querySelectorAll('.nav-link')[5])">Sponsors</div>
+      <div class="footer-link" onclick="showSection('licence',document.querySelectorAll('.nav-link')[6])">Demande de licence</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Réseaux Sociaux</div>
+      <div class="social-row">
+        <a class="social-btn" href="#">f</a>
+        <a class="social-btn" href="#" style="font-style:italic;">ig</a>
+        <a class="social-btn" href="#">𝕏</a>
+        <a class="social-btn" href="#">▶</a>
+      </div>
+      <div style="font-size:11px;color:#333;margin-top:10px;">@JSST_Officiel</div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>© 2026 <span>JSST — Jeunesse Sportive Saint-Thonanaise</span> — Tous droits réservés</div>
+    <div>Fait avec passion en Bretagne</div>
+  </div>
+</footer>
+
+<script>
+function showSection(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  document.getElementById('section-' + id).classList.add('active');
+  if (el) {
+    el.classList.add('active');
+  } else {
+    const links = ['accueil','convocations','boutique','histoire','club','sponsors','licence'];
+    const idx = links.indexOf(id);
+    if (idx >= 0) document.querySelectorAll('.nav-link')[idx].classList.add('active');
+  }
+  window.scrollTo(0, 0);
+}
+
+function toggleConvoc(id, btn) {
+  const detail = document.getElementById('convoc-' + id);
+  const isOpen = detail.classList.contains('open');
+  document.querySelectorAll('.convoc-detail').forEach(d => d.classList.remove('open'));
+  document.querySelectorAll('.convoc-btn').forEach(b => b.classList.remove('open'));
+  if (!isOpen) {
+    detail.classList.add('open');
+    btn.classList.add('open');
+  }
+}
+
+function submitLicence() {
+  const msg = document.getElementById('success-msg');
+  msg.style.display = 'block';
+  setTimeout(() => msg.style.display = 'none', 5000);
+}
+
+document.querySelectorAll('.btn-add').forEach(btn => {
+  btn.addEventListener('click', () => {
+    btn.textContent = 'Ajouté !';
+    btn.style.background = '#1d6e34';
+    setTimeout(() => { btn.textContent = 'Ajouter'; btn.style.background = ''; }, 2000);
+  });
+});
+</script>
+</body>
+</html>
